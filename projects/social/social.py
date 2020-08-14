@@ -58,7 +58,7 @@ class SocialGraph:
         possible_friendships = []
 
         for user_id in self.users:
-            for friend_id in self.users:
+            for friend_id in range(user_id + 1, self.last_id + 1):
                 possible_friendships.append((user_id, friend_id))
 
         random.shuffle(possible_friendships)
@@ -68,17 +68,21 @@ class SocialGraph:
             self.add_friendship(friendships[0], friendships[1])
 
     def get_all_social_paths(self, user_id):
-        """
-        Takes a user's user_id as an argument
-
-        Returns a dictionary containing every user in that user's
-        extended network with the shortest friendship path between them.
-
-        The key is the friend's ID and the value is the path.
-        """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        visited = {}
+        q = Queue()
+        q.enqueue([user_id])
+        while q.size() > 0:
+            path = q.dequeue()
+            newuser_id = path[-1]
+            if newuser_id not in visited:
+                visited[newuser_id] = path
+                for friend_id in self.friendships[newuser_id]:
+                    if friend_id not in visited:
+                        new_path = list(path)
+                        new_path.append(friend_id)
+                        q.enqueue(new_path)
         return visited
+
 
 
 if __name__ == '__main__':
